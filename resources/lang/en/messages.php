@@ -31,6 +31,7 @@ return [
         'options' => 'Options',
         'option' => 'Option',
         'add_option' => 'Add an option',
+        'add_option_error' => 'Failed to add the option, please try again.',
         'new_option' => 'New option',
         'multiple_choice' => 'Allow multiple choices',
         'status' => 'Status',

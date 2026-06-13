@@ -53,58 +53,140 @@
                 <div class="mb-3">
                     <label class="form-label">{{ trans('polls::messages.admin.options') }}</label>
 
-                    @foreach ($poll->options as $option)
-                        <div class="input-group mb-2">
-                            <span class="input-group-text">{{ $option->votes_count }} {{ trans('polls::messages.votes') }}</span>
-                            <input type="text" name="options[{{ $option->id }}]" class="form-control" value="{{ old('options.'.$option->id, $option->label) }}" maxlength="255">
+                    <div id="options-container">
+                        @foreach ($poll->options as $option)
+                            <div class="input-group mb-2" data-option-id="{{ $option->id }}">
+                                <span class="input-group-text">{{ $option->votes_count }} {{ trans('polls::messages.votes') }}</span>
+                                <input type="text" name="options[{{ $option->id }}]" class="form-control" value="{{ old('options.'.$option->id, $option->label) }}" maxlength="255">
 
-                            <button type="submit" form="delete-option-{{ $option->id }}" class="btn btn-outline-danger" onclick="return confirm('{{ trans('polls::messages.admin.confirm_delete_option') }}')">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    @endforeach
+                                <button type="submit" form="delete-option-{{ $option->id }}" class="btn btn-outline-danger">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        @endforeach
+                    </div>
 
                     <hr>
 
-                    <label class="form-label">{{ trans('polls::messages.admin.new_option') }}</label>
-                    <div id="new-options-container">
-                        <div class="input-group mb-2">
-                            <input type="text" name="new_options[]" class="form-control" placeholder="{{ trans('polls::messages.admin.new_option') }}" maxlength="255">
-                        </div>
-                    </div>
+                    <div class="input-group">
+                        <input type="text" id="new-option-input" class="form-control" placeholder="{{ trans('polls::messages.admin.new_option') }}" maxlength="255">
 
-                    <button type="button" id="add-option" class="btn btn-sm btn-outline-secondary mt-1">
-                        <i class="fas fa-plus"></i> {{ trans('polls::messages.admin.add_option') }}
-                    </button>
+                        <button type="button" id="add-option" class="btn btn-outline-secondary">
+                            <i class="bi bi-plus-lg"></i> {{ trans('polls::messages.admin.add_option') }}
+                        </button>
+                    </div>
                 </div>
 
                 <button type="submit" class="btn btn-primary">{{ trans('polls::messages.admin.save') }}</button>
                 <a href="{{ route('polls.admin.index') }}" class="btn btn-secondary">{{ trans('polls::messages.admin.cancel') }}</a>
             </form>
 
-            @foreach ($poll->options as $option)
-                <form id="delete-option-{{ $option->id }}" action="{{ route('polls.admin.options.destroy', [$poll, $option]) }}" method="POST" class="d-none">
-                    @csrf
-                    @method('DELETE')
-                </form>
-            @endforeach
+            <div id="delete-forms">
+                @foreach ($poll->options as $option)
+                    <form id="delete-option-{{ $option->id }}" action="{{ route('polls.admin.options.destroy', [$poll, $option]) }}" method="POST" class="d-none">
+                        @csrf
+                        @method('DELETE')
+                    </form>
+                @endforeach
+            </div>
         </div>
     </div>
 @endsection
 
-@section('scripts')
+@push('footer-scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const container = document.getElementById('new-options-container');
+            const optionsContainer = document.getElementById('options-container');
+            const deleteForms = document.getElementById('delete-forms');
+            const newOptionInput = document.getElementById('new-option-input');
             const addButton = document.getElementById('add-option');
 
-            addButton.addEventListener('click', function () {
+            const storeUrl = '{{ route('polls.admin.options.store', $poll) }}';
+            const csrfToken = '{{ csrf_token() }}';
+            const votesLabel = '{{ trans('polls::messages.votes') }}';
+            const confirmDeleteText = '{{ trans('polls::messages.admin.confirm_delete_option') }}';
+            const addOptionErrorText = '{{ trans('polls::messages.admin.add_option_error') }}';
+
+            function appendOption(option) {
                 const row = document.createElement('div');
                 row.className = 'input-group mb-2';
-                row.innerHTML = '<input type="text" name="new_options[]" class="form-control" placeholder="{{ trans("polls::messages.admin.new_option") }}" maxlength="255">';
+                row.dataset.optionId = option.id;
 
-                container.appendChild(row);
+                row.innerHTML = '<span class="input-group-text">' + option.votes_count + ' ' + votesLabel + '</span>'
+                    + '<input type="text" name="options[' + option.id + ']" class="form-control" value="' + option.label.replace(/"/g, '&quot;') + '" maxlength="255">'
+                    + '<button type="submit" form="delete-option-' + option.id + '" class="btn btn-outline-danger"><i class="bi bi-trash"></i></button>';
+
+                row.querySelector('button').addEventListener('click', function (event) {
+                    if (!confirm(confirmDeleteText)) {
+                        event.preventDefault();
+                    }
+                });
+
+                optionsContainer.appendChild(row);
+
+                const form = document.createElement('form');
+                form.id = 'delete-option-' + option.id;
+                form.action = option.delete_url;
+                form.method = 'POST';
+                form.className = 'd-none';
+                form.innerHTML = '<input type="hidden" name="_token" value="' + csrfToken + '">'
+                    + '<input type="hidden" name="_method" value="DELETE">';
+
+                deleteForms.appendChild(form);
+            }
+
+            addButton.addEventListener('click', function () {
+                const label = newOptionInput.value.trim();
+
+                if (label === '') {
+                    return;
+                }
+
+                addButton.disabled = true;
+
+                fetch(storeUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Accept: 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                    body: JSON.stringify({ label: label }),
+                })
+                    .then(function (response) {
+                        if (!response.ok) {
+                            throw new Error('Request failed');
+                        }
+
+                        return response.json();
+                    })
+                    .then(function (option) {
+                        appendOption(option);
+                        newOptionInput.value = '';
+                        newOptionInput.focus();
+                    })
+                    .catch(function () {
+                        alert(addOptionErrorText);
+                    })
+                    .finally(function () {
+                        addButton.disabled = false;
+                    });
+            });
+
+            newOptionInput.addEventListener('keydown', function (event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    addButton.click();
+                }
+            });
+
+            document.querySelectorAll('#options-container button').forEach(function (button) {
+                button.addEventListener('click', function (event) {
+                    if (!confirm(confirmDeleteText)) {
+                        event.preventDefault();
+                    }
+                });
             });
         });
     </script>
-@endsection
+@endpush

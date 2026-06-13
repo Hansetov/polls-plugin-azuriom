@@ -47,14 +47,14 @@
                             <div class="input-group mb-2 option-row">
                                 <input type="text" name="options[]" class="form-control" value="{{ $value }}" placeholder="{{ trans('polls::messages.admin.option') }} {{ $index + 1 }}" maxlength="255" required>
                                 <button type="button" class="btn btn-outline-danger remove-option" {{ count($oldOptions) <= 2 ? 'disabled' : '' }}>
-                                    <i class="fas fa-times"></i>
+                                    <i class="bi bi-x"></i>
                                 </button>
                             </div>
                         @endforeach
                     </div>
 
                     <button type="button" id="add-option" class="btn btn-sm btn-outline-secondary mt-1">
-                        <i class="fas fa-plus"></i> {{ trans('polls::messages.admin.add_option') }}
+                        <i class="bi bi-plus-lg"></i> {{ trans('polls::messages.admin.add_option') }}
                     </button>
                 </div>
 
@@ -65,7 +65,7 @@
     </div>
 @endsection
 
-@section('scripts')
+@push('footer-scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const container = document.getElementById('options-container');
@@ -83,7 +83,7 @@
                 const row = document.createElement('div');
                 row.className = 'input-group mb-2 option-row';
                 row.innerHTML = '<input type="text" name="options[]" class="form-control" placeholder="{{ trans("polls::messages.admin.option") }}" maxlength="255" required>'
-                    + '<button type="button" class="btn btn-outline-danger remove-option"><i class="fas fa-times"></i></button>';
+                    + '<button type="button" class="btn btn-outline-danger remove-option"><i class="bi bi-x"></i></button>';
 
                 container.appendChild(row);
                 refreshRemoveButtons();
@@ -107,4 +107,4 @@
             refreshRemoveButtons();
         });
     </script>
-@endsection
+@endpush
