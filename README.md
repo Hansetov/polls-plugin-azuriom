@@ -19,6 +19,8 @@ This plugin adds a "Polls" section to your website:
    ```bash
    php artisan migrate
    ```
+<img width="1398" height="481" alt="изображение" src="https://github.com/user-attachments/assets/4d4a40a9-1032-448b-896c-1af60ef2a893" />
+<img width="1628" height="376" alt="изображение" src="https://github.com/user-attachments/assets/4070281c-56d6-4be3-bc17-5af5c70f866f" />
 
 ## Usage
 
@@ -88,3 +90,4 @@ polls/
 - Automatic poll closing date.
 - Notifications about new polls.
 - Export results to CSV.
+
