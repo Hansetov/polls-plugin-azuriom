@@ -1,0 +1,14 @@
+{
+    "name": "azuriom/plugin-polls",
+    "description": "Allow your community to vote on polls (ideas) created by administrators.",
+    "type": "azuriom-plugin",
+    "license": "MIT",
+    "require": {
+        "php": ">=8.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Azuriom\\Plugin\\Polls\\": "src/"
+        }
+    }
+}

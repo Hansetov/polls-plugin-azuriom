@@ -1,0 +1,15 @@
+{
+    "id": "polls",
+    "name": "Polls",
+    "description": "Allow your community to vote on polls created by administrators.",
+    "version": "1.0.0",
+    "url": "https://azuriom.com",
+    "authors": [
+        "Hanset"
+    ],
+    "azuriom_api": "1.2.0",
+    "providers": [
+        "\\Azuriom\\Plugin\\Polls\\Providers\\PollsServiceProvider",
+        "\\Azuriom\\Plugin\\Polls\\Providers\\RouteServiceProvider"
+    ]
+}
