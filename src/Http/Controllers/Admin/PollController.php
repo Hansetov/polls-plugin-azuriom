@@ -60,8 +60,6 @@ class PollController extends Controller
             'multiple_choice' => ['nullable', 'boolean'],
             'options' => ['nullable', 'array'],
             'options.*' => ['nullable', 'string', 'max:255'],
-            'new_options' => ['nullable', 'array'],
-            'new_options.*' => ['nullable', 'string', 'max:255'],
         ]);
 
         $poll->update([
@@ -78,16 +76,26 @@ class PollController extends Controller
             $poll->options()->where('id', $optionId)->update(['label' => $label]);
         }
 
-        foreach ($request->input('new_options', []) as $label) {
-            if (trim((string) $label) === '') {
-                continue;
-            }
-
-            $poll->options()->create(['label' => $label]);
-        }
-
         return to_route('polls.admin.edit', $poll)
             ->with('success', trans('polls::messages.admin.updated'));
+    }
+
+    public function storeOption(Request $request, Poll $poll)
+    {
+        $request->validate([
+            'label' => ['required', 'string', 'max:255'],
+        ]);
+
+        $option = $poll->options()->create([
+            'label' => $request->input('label'),
+        ]);
+
+        return response()->json([
+            'id' => $option->id,
+            'label' => $option->label,
+            'votes_count' => $option->votes_count,
+            'delete_url' => route('polls.admin.options.destroy', [$poll, $option]),
+        ]);
     }
 
     public function toggleStatus(Poll $poll): RedirectResponse

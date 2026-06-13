@@ -11,5 +11,6 @@ Route::middleware('can:polls.admin')->group(function () {
     Route::put('/{poll}', [PollController::class, 'update'])->name('update');
     Route::post('/{poll}/toggle', [PollController::class, 'toggleStatus'])->name('toggle');
     Route::delete('/{poll}', [PollController::class, 'destroy'])->name('destroy');
+    Route::post('/{poll}/options', [PollController::class, 'storeOption'])->name('options.store');
     Route::delete('/{poll}/options/{option}', [PollController::class, 'destroyOption'])->name('options.destroy');
 });
