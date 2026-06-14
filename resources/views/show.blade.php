@@ -45,7 +45,7 @@
 
                             <div class="d-flex flex-column gap-2">
                                 @foreach ($poll->options as $option)
-                                    <label class="poll-option d-flex align-items-center gap-2 p-3 border rounded-3" for="option-{{ $option->id }}">
+                                    <label class="d-flex align-items-center gap-2 p-3 border rounded-3" for="option-{{ $option->id }}">
                                         @if ($poll->multiple_choice)
                                             <input class="form-check-input m-0 flex-shrink-0" type="checkbox" name="options[]" value="{{ $option->id }}" id="option-{{ $option->id }}">
                                         @else
@@ -73,7 +73,7 @@
                                     $isLeading = $totalVotes > 0 && $option->votes_count === $maxVotes;
                                 @endphp
 
-                                <div class="poll-result p-3 border rounded-3 {{ $isLeading ? 'border-success' : '' }}">
+                                <div class="p-3 border rounded-3 {{ $isLeading ? 'border-success' : '' }}">
                                     <div class="d-flex justify-content-between align-items-center mb-2">
                                         <span class="fw-semibold">
                                             {{ $option->label }}
@@ -88,7 +88,7 @@
                                         </span>
 
                                         <span class="text-muted small">
-                                            {{ $percentage }}% &middot; {{ $option->votes_count }} {{ trans('polls::messages.votes') }}
+                                            {{ $percentage }}% &middot; {{ trans_count('polls::messages.votes', $option->votes_count) }}
                                         </span>
                                     </div>
 
@@ -108,23 +108,4 @@
             </div>
         </div>
     </div>
-@endsection
-
-@section('styles')
-    <style>
-        .poll-option {
-            cursor: pointer;
-            transition: border-color .15s ease-in-out, background-color .15s ease-in-out;
-        }
-
-        .poll-option:hover {
-            border-color: var(--bs-primary);
-            background-color: rgba(var(--bs-primary-rgb), .05);
-        }
-
-        .poll-option:has(input:checked) {
-            border-color: var(--bs-primary);
-            background-color: rgba(var(--bs-primary-rgb), .08);
-        }
-    </style>
 @endsection

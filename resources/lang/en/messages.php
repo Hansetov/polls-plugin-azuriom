@@ -7,7 +7,7 @@ return [
         'open' => 'Open',
         'closed' => 'Closed',
     ],
-    'votes' => 'votes',
+    'votes' => ':count vote|:count votes',
     'no_polls' => 'There is no poll at the moment, come back later!',
     'multiple_choice_hint' => 'You can select multiple options.',
     'vote' => 'Vote',

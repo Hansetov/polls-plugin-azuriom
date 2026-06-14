@@ -31,7 +31,7 @@
 
                                             <small class="text-muted">
                                                 <i class="bi bi-people-fill"></i>
-                                                {{ (int) ($poll->options_sum_votes_count ?? 0) }} {{ trans('polls::messages.votes') }}
+                                                {{ trans_count('polls::messages.votes', (int) ($poll->options_sum_votes_count ?? 0)) }}
                                             </small>
                                         </div>
 
