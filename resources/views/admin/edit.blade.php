@@ -56,7 +56,7 @@
                     <div id="options-container">
                         @foreach ($poll->options as $option)
                             <div class="input-group mb-2" data-option-id="{{ $option->id }}">
-                                <span class="input-group-text">{{ trans_count('polls::messages.votes', $option->votes_count) }}</span>
+                                <span class="input-group-text">{{ trans_choice('polls::messages.votes', $option->votes_count) }}</span>
                                 <input type="text" name="options[{{ $option->id }}]" class="form-control" value="{{ old('options.'.$option->id, $option->label) }}" maxlength="255">
 
                                 <button type="submit" form="delete-option-{{ $option->id }}" class="btn btn-outline-danger">
@@ -103,7 +103,7 @@
 
             const storeUrl = '{{ route('polls.admin.options.store', $poll) }}';
             const csrfToken = '{{ csrf_token() }}';
-            const zeroVotesLabel = '{{ trans_count('polls::messages.votes', 0) }}';
+            const zeroVotesLabel = '{{ trans_choice('polls::messages.votes', 0) }}';
             const confirmDeleteText = '{{ trans('polls::messages.admin.confirm_delete_option') }}';
             const addOptionErrorText = '{{ trans('polls::messages.admin.add_option_error') }}';
 

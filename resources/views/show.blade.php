@@ -88,7 +88,7 @@
                                         </span>
 
                                         <span class="text-muted small">
-                                            {{ $percentage }}% &middot; {{ trans_count('polls::messages.votes', $option->votes_count) }}
+                                            {{ $percentage }}% &middot; {{ trans_choice('polls::messages.votes', $option->votes_count) }}
                                         </span>
                                     </div>
 
